@@ -1,9 +1,11 @@
 package gr.kokeroulis.androiddatetime;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -11,6 +13,12 @@ import java.util.List;
 
 public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
     private final List<Integer> mValues = new ArrayList<>();
+    private int activatedItem =- -1;
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -23,6 +31,14 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         int item = mValues.get(position);
         holder.dateValue.setText(String.valueOf(item));
+        int color;
+        if (holder.getAdapterPosition() == activatedItem) {
+            color = android.R.color.holo_red_dark;
+        } else {
+            color = android.R.color.white;
+        }
+
+        holder.parentView.setBackgroundColor(ContextCompat.getColor(holder.parentView.getContext(), color));
     }
 
     public void setItems(int... values) {
@@ -43,11 +59,21 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
         return mValues.size();
     }
 
+    public int getActivatedItem() {
+        return activatedItem;
+    }
+
+    public void setActivatedItem(int activatedItem) {
+        this.activatedItem = activatedItem;
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView dateValue;
+        public final LinearLayout parentView;
         public ViewHolder(View itemView) {
             super(itemView);
             dateValue = (TextView) itemView.findViewById(R.id.date_value);
+            parentView = (LinearLayout) itemView.findViewById(R.id.date_value_parent);
         }
     }
 }
