@@ -21,6 +21,11 @@ public class DayModel implements Parcelable, DateModel {
     }
 
     @Override
+    public int value() {
+        return day;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

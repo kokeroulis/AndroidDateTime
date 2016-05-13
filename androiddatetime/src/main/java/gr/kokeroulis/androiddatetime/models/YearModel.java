@@ -21,6 +21,11 @@ public class YearModel implements Parcelable, DateModel {
     }
 
     @Override
+    public int value() {
+        return year;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

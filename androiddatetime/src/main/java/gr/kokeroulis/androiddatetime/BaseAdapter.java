@@ -16,6 +16,11 @@ import gr.kokeroulis.androiddatetime.models.DateModel;
 public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
     private final List<DateModel> mValues = new ArrayList<>();
     private int activatedItem = 2;
+    private final Callback callback;
+
+    public BaseAdapter(Callback callback) {
+        this.callback = callback;
+    }
 
     @Override
     public int getItemViewType(int position) {
@@ -66,9 +71,15 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
 
     public void setActivatedItem(int activatedItem) {
         this.activatedItem = activatedItem;
+        callback.onDateChanged(getActivatedValue());
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public int getActivatedValue() {
+        DateModel item = mValues.get(activatedItem);
+        return item.value();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView dateValue;
         public final LinearLayout parentView;
         public ViewHolder(View itemView) {
@@ -76,5 +87,9 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
             dateValue = (TextView) itemView.findViewById(R.id.date_value);
             parentView = (LinearLayout) itemView.findViewById(R.id.date_value_parent);
         }
+    }
+
+    public static abstract class Callback {
+        public abstract void onDateChanged(int value);
     }
 }

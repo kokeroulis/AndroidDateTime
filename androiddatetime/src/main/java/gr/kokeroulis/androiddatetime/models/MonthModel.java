@@ -15,10 +15,14 @@ public class MonthModel implements Parcelable, DateModel {
 
     protected MonthModel() {}
 
-
     @Override
     public String title() {
         return MonthProvider.getMonth(monthDate);
+    }
+
+    @Override
+    public int value() {
+        return monthDate;
     }
 
     @Override
