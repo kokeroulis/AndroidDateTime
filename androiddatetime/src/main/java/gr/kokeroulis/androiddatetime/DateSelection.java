@@ -9,15 +9,16 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
-import butterknife.Bind;
-
 /**
  * Created by kokeroulis on 13/05/16.
  */
 public class DateSelection extends LinearLayout {
     private RecyclerView monthRv;
+    private RecyclerView dayRv;
     private RecyclerView yearRv;
+
     private BaseAdapter monthAdapter;
+    private BaseAdapter dayAdapter;
     private BaseAdapter yearAdapter;
 
 
@@ -60,12 +61,21 @@ public class DateSelection extends LinearLayout {
         monthRv.setAdapter(monthAdapter);
         monthAdapter.setItems(DataDateProvider.getMonths());
 
+        dayRv = (RecyclerView) findViewById(R.id.dayRecyclerView);
+        dayAdapter = new BaseAdapter();
+        dayRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        dayRv.addOnScrollListener(new CenterLockListener(0));
+        dayRv.setAdapter(dayAdapter);
+        dayAdapter.setItems(DataDateProvider.getDaysForMonthAndYear(5, 2016));
+
         yearRv = (RecyclerView) findViewById(R.id.yearRecyclerView);
         yearAdapter = new BaseAdapter();
         yearRv.setLayoutManager(new LinearLayoutManager(getContext()));
         yearRv.addOnScrollListener(new CenterLockListener(0));
         yearRv.setAdapter(yearAdapter);
         yearAdapter.setItems(DataDateProvider.getYears());
+
+
 
 
 
