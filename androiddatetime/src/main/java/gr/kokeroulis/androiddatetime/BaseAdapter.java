@@ -11,8 +11,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import gr.kokeroulis.androiddatetime.models.DateModel;
+
 public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
-    private final List<Integer> mValues = new ArrayList<>();
+    private final List<DateModel> mValues = new ArrayList<>();
     private int activatedItem =- -1;
 
     @Override
@@ -29,8 +31,8 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        int item = mValues.get(position);
-        holder.dateValue.setText(String.valueOf(item));
+        final DateModel item = mValues.get(position);
+        holder.dateValue.setText(item.title());
         int color;
         if (holder.getAdapterPosition() == activatedItem) {
             color = android.R.color.holo_red_dark;
@@ -41,17 +43,11 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
         holder.parentView.setBackgroundColor(ContextCompat.getColor(holder.parentView.getContext(), color));
     }
 
-    public void setItems(int... values) {
+    public void setItems(List<DateModel> models) {
         mValues.clear();
-        for (int v : values) {
-            mValues.add(v);
-        }
+        mValues.addAll(models);
 
         notifyDataSetChanged();
-    }
-
-    public int getItemValue(int pos) {
-        return mValues.get(pos);
     }
 
     @Override
