@@ -15,7 +15,7 @@ import gr.kokeroulis.androiddatetime.models.DateModel;
 
 public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
     private final List<DateModel> mValues = new ArrayList<>();
-    private int activatedItem =- -1;
+    private int activatedItem = 2;
 
     @Override
     public int getItemViewType(int position) {
@@ -32,7 +32,9 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final DateModel item = mValues.get(position);
-        holder.dateValue.setText(item.title());
+        if (!item.title().equals("fake")) {
+            holder.dateValue.setText(item.title());
+        }
         int color;
         if (holder.getAdapterPosition() == activatedItem) {
             color = android.R.color.holo_red_dark;
@@ -45,8 +47,11 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
 
     public void setItems(List<DateModel> models) {
         mValues.clear();
+        mValues.add(DateModel.fakeModelForPadding);
+        mValues.add(DateModel.fakeModelForPadding);
         mValues.addAll(models);
-
+        mValues.add(DateModel.fakeModelForPadding);
+        mValues.add(DateModel.fakeModelForPadding);
         notifyDataSetChanged();
     }
 

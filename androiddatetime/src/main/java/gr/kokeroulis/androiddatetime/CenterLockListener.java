@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 public class CenterLockListener extends RecyclerView.OnScrollListener {
@@ -45,9 +46,19 @@ public class CenterLockListener extends RecyclerView.OnScrollListener {
                 RecyclerView.ViewHolder holder = recyclerView.getChildViewHolder(view);
                 if (holder != null) {
                     int second = lm.findLastVisibleItemPosition();
-                    final int pos =  second - 2;
+                    int pos =  second - 2;
                     final BaseAdapter adapter = getBaseDateTimeAdapter(recyclerView);
-                    if (adapter != null && adapter.getActivatedItem() != pos && pos > 0) {
+                    if (pos <= 0) {
+                        Log.e("test", "smaller");
+                    }
+
+                    Log.e("test", "here");
+                    if (adapter != null && adapter.getActivatedItem() != pos) {
+                        if (pos == 1) {
+                            pos = 2;
+                        } else if (pos <= 0) {
+                            pos = 2;
+                        }
                         adapter.setActivatedItem(pos);
                         adapter.notifyDataSetChanged();
                     }

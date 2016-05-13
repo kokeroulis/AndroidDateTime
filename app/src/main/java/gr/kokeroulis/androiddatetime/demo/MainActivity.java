@@ -9,6 +9,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import gr.kokeroulis.androiddatetime.BaseAdapter;
 import gr.kokeroulis.androiddatetime.CenterLockListener;
+import gr.kokeroulis.androiddatetime.DataDateProvider;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
         adapter = new BaseAdapter();
         recyclerView.setAdapter(adapter);
 
-        
-        adapter.setItems(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22);
+
+        adapter.setItems(DataDateProvider.getMonths());
         recyclerView.addOnScrollListener(new CenterLockListener(0));
     }
 }
