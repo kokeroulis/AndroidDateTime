@@ -60,6 +60,10 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    public List<DateModel> getItems() {
+        return mValues;
+    }
+
     @Override
     public int getItemCount() {
         return mValues.size();

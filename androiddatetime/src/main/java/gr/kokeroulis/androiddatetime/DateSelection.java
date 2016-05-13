@@ -17,6 +17,7 @@ public class DateSelection extends LinearLayout {
     private BaseAdapter monthAdapter;
     private BaseAdapter dayAdapter;
     private BaseAdapter yearAdapter;
+    private int currentDay = -1;
 
     private final BaseAdapter.Callback dayCallback = new BaseAdapter.Callback() {
         @Override
@@ -38,6 +39,7 @@ public class DateSelection extends LinearLayout {
         public void onDateChanged(int value) {
             int month = monthAdapter.getActivatedValue();
             updateDayAdapter(month, value);
+            scrollDayAdapter();
         }
     };
 
@@ -84,7 +86,6 @@ public class DateSelection extends LinearLayout {
         dayRv.setLayoutManager(new LinearLayoutManager(getContext()));
         dayRv.addOnScrollListener(new CenterLockListener(0));
         dayRv.setAdapter(dayAdapter);
-        dayAdapter.setItems(DataDateProvider.getDaysForMonthAndYear(5, 2016));
 
         yearRv = (RecyclerView) findViewById(R.id.yearRecyclerView);
         yearAdapter = new BaseAdapter(yearCallback);
@@ -92,6 +93,8 @@ public class DateSelection extends LinearLayout {
         yearRv.addOnScrollListener(new CenterLockListener(0));
         yearRv.setAdapter(yearAdapter);
         yearAdapter.setItems(DataDateProvider.getYears());
+
+        setCurrentDate(13, 5, 2016);
     }
 
     private void updateDayAdapter(int month, int year) {
@@ -100,5 +103,21 @@ public class DateSelection extends LinearLayout {
         dayAdapter.setItems(DataDateProvider.getDaysForMonthAndYear(month, year));
     }
 
+    public void setCurrentDate(int day, int month, int year) {
 
+        new AsyncTaskHelper(month, monthRv).execute(monthAdapter);
+        new AsyncTaskHelper(year, yearRv).execute(yearAdapter);
+        // small hack for waiting until our month adapter has been populated
+        currentDay = day;
+    }
+
+    private void scrollDayAdapter() {
+        // Small hack for starting the async task after our
+        // month adapter has data.
+        // This is being used for setCurrentDate
+        if (currentDay != -1) {
+            new AsyncTaskHelper(currentDay, dayRv).execute(dayAdapter);
+            currentDay = -1;
+        }
+    }
 }
