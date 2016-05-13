@@ -13,9 +13,7 @@ import gr.kokeroulis.androiddatetime.DataDateProvider;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
-    @Bind(R.id.demo_recyclerView)
-    RecyclerView recyclerView;
-    BaseAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,13 +22,13 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Timber.plant(new Timber.DebugTree());
 
-        final LinearLayoutManager manager = new LinearLayoutManager(this);
+        /*final LinearLayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         adapter = new BaseAdapter();
         recyclerView.setAdapter(adapter);
 
 
         adapter.setItems(DataDateProvider.getMonths());
-        recyclerView.addOnScrollListener(new CenterLockListener(0));
+        recyclerView.addOnScrollListener(new CenterLockListener(0));*/
     }
 }
