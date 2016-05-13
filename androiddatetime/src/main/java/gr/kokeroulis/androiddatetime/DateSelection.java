@@ -7,7 +7,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class DateSelection extends LinearLayout {
     private RecyclerView monthRv;
@@ -18,6 +21,8 @@ public class DateSelection extends LinearLayout {
     private BaseAdapter dayAdapter;
     private BaseAdapter yearAdapter;
     private int currentDay = -1;
+    private boolean imageViewIsSet = false;
+    ImageView dateBackground;
 
     private final BaseAdapter.Callback dayCallback = new BaseAdapter.Callback() {
         @Override
@@ -40,6 +45,23 @@ public class DateSelection extends LinearLayout {
             int month = monthAdapter.getActivatedValue();
             updateDayAdapter(month, value);
             scrollDayAdapter();
+            /*if (!imageViewIsSet) {
+                final RecyclerView.ViewHolder holder = yearRv.findViewHolderForAdapterPosition(0);
+                final ViewTreeObserver observer = holder.itemView.getViewTreeObserver();
+                observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        int height = holder.itemView.getMeasuredHeight();
+                        int width = holder.itemView.getMeasuredWidth();
+                        RelativeLayout.LayoutParams pars = new RelativeLayout.LayoutParams(width *3, height);
+                        dateBackground.setLayoutParams(pars);
+                        imageViewIsSet = true;
+                        if (observer.isAlive()) {
+                            observer.removeOnGlobalLayoutListener(this);
+                        }
+                    }
+                });
+            }*/
         }
     };
 
@@ -74,23 +96,39 @@ public class DateSelection extends LinearLayout {
         LayoutInflater.from(getContext())
             .inflate(R.layout.layout_selection_date, this, true);
 
+        dateBackground = (ImageView) findViewById(R.id.date_background);
+        final int centerPivot = dateBackground.getTop() - dateBackground.getBottom();
+
+        final ViewTreeObserver observer = dateBackground.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                monthRv.addOnScrollListener(new CenterLockListener(dateBackground.getX(), dateBackground.getY()));
+                dayRv.addOnScrollListener(new CenterLockListener(dateBackground.getX(), dateBackground.getY()));
+
+                yearRv.addOnScrollListener(new CenterLockListener(dateBackground.getX(), dateBackground.getY()));
+                if (observer.isAlive()) {
+                    observer.removeOnGlobalLayoutListener(this);
+                }
+            }
+        });
         monthRv = (RecyclerView) findViewById(R.id.monthRecyclerView);
         monthAdapter = new BaseAdapter(monthCallback);
         monthRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        monthRv.addOnScrollListener(new CenterLockListener(0));
+        //monthRv.addOnScrollListener(new CenterLockListener(dateBackground.getX(), dateBackground.getY()));
         monthRv.setAdapter(monthAdapter);
         monthAdapter.setItems(DataDateProvider.getMonths());
 
         dayRv = (RecyclerView) findViewById(R.id.dayRecyclerView);
         dayAdapter = new BaseAdapter(dayCallback);
         dayRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        dayRv.addOnScrollListener(new CenterLockListener(0));
+        //dayRv.addOnScrollListener(new CenterLockListener(dateBackground.getX(), dateBackground.getY()));
         dayRv.setAdapter(dayAdapter);
 
         yearRv = (RecyclerView) findViewById(R.id.yearRecyclerView);
         yearAdapter = new BaseAdapter(yearCallback);
         yearRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        yearRv.addOnScrollListener(new CenterLockListener(0));
+        //yearRv.addOnScrollListener(new CenterLockListener(dateBackground.getX(), dateBackground.getY()));
         yearRv.setAdapter(yearAdapter);
         yearAdapter.setItems(DataDateProvider.getYears());
 
