@@ -2,18 +2,17 @@ package gr.kokeroulis.androiddatetime.demo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import gr.kokeroulis.androiddatetime.BaseAdapter;
-import gr.kokeroulis.androiddatetime.CenterLockListener;
-import gr.kokeroulis.androiddatetime.DataDateProvider;
+import gr.kokeroulis.androiddatetime.DateSelection;
+import gr.kokeroulis.androiddatetime.OnDateChangedListener;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
-
+    @Bind(R.id.date_selection_picker) DateSelection dateSelection;
+    @Bind(R.id.value) TextView valueText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,13 +21,11 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Timber.plant(new Timber.DebugTree());
 
-        /*final LinearLayoutManager manager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(manager);
-        adapter = new BaseAdapter();
-        recyclerView.setAdapter(adapter);
-
-
-        adapter.setItems(DataDateProvider.getMonths());
-        recyclerView.addOnScrollListener(new CenterLockListener(0));*/
+        dateSelection.setOnDateChangedListener(new OnDateChangedListener() {
+            @Override
+            public void onDateChanged(int day, int month, int year) {
+                valueText.setText(day + "/" + month + "/" + year);
+            }
+        });
     }
 }
