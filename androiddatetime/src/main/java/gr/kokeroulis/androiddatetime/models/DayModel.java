@@ -46,4 +46,20 @@ public class DayModel implements Parcelable, DateModel {
             return new DayModel[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DayModel)) return false;
+
+        DayModel dayModel = (DayModel) o;
+
+        return day == dayModel.day;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return day;
+    }
 }

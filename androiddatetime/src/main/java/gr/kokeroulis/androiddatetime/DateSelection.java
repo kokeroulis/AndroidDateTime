@@ -2,6 +2,7 @@ package gr.kokeroulis.androiddatetime;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,10 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import java.util.List;
+
+import gr.kokeroulis.androiddatetime.models.DateModel;
+
 public class DateSelection extends LinearLayout {
     private RecyclerView monthRv;
     private RecyclerView dayRv;
@@ -20,8 +25,8 @@ public class DateSelection extends LinearLayout {
     private BaseAdapter monthAdapter;
     private BaseAdapter dayAdapter;
     private BaseAdapter yearAdapter;
-    private int currentDay = -1;
     private OnDateChangedListener listener;
+    private AsyncTaskHelper helper;
 
     private final BaseAdapter.Callback dayCallback = new BaseAdapter.Callback() {
         @Override
@@ -36,7 +41,7 @@ public class DateSelection extends LinearLayout {
         @Override
         public void onDateChanged(int value) {
             int year = yearAdapter.getActivatedValue();
-            updateDayAdapter(value, year);
+            updateDayAdapter(dayAdapter.getActivatedValue(), value, year);
             if (listener != null) {
                 listener.onDateChanged(dayAdapter.getActivatedValue(), value, yearAdapter.getActivatedValue());
             }
@@ -47,8 +52,7 @@ public class DateSelection extends LinearLayout {
         @Override
         public void onDateChanged(int value) {
             int month = monthAdapter.getActivatedValue();
-            updateDayAdapter(month, value);
-            scrollDayAdapter();
+            updateDayAdapter(dayAdapter.getActivatedValue(), month, value);
             if (listener != null) {
                 listener.onDateChanged(dayAdapter.getActivatedValue(), monthAdapter.getActivatedValue(), value);
             }
@@ -123,10 +127,40 @@ public class DateSelection extends LinearLayout {
         setCurrentDate(13, 5, 2016);
     }
 
-    private void updateDayAdapter(int month, int year) {
+    private void updateDayAdapter(int day, int month, int year) {
+        updateDayAdapter(day, month, year, false);
+    }
+
+    private void updateDayAdapter(int day, int month, int year, final boolean firstRun) {
+        DateModel correctionDay = null;
+        final List<DateModel> days = DataDateProvider.getDaysForMonthAndYear(month, year);
+        for (DateModel dateModel : days) {
+            if (dateModel.value() == day) {
+                correctionDay = dateModel;
+                break;
+            }
+        }
+
+        if (correctionDay == null) {
+            correctionDay = days.get(days.size() - 1);
+        }
+
         dayAdapter = new BaseAdapter(dayCallback);
         dayRv.setAdapter(dayAdapter);
-        dayAdapter.setItems(DataDateProvider.getDaysForMonthAndYear(month, year));
+        dayAdapter.setItems(days);
+        dayAdapter.setActivatedItem(dayAdapter.getItems().indexOf(correctionDay));
+        if (helper == null || helper.getStatus() == AsyncTask.Status.FINISHED) {
+            helper = new AsyncTaskHelper(correctionDay.value(), dayRv) {
+
+                @Override
+                protected void onPostExecute(Integer activateItem) {
+                    super.onPostExecute(activateItem);
+                    if (firstRun) dayRv.scrollToPosition(activateItem - 1);
+                }
+            };
+
+            helper.execute(dayAdapter);
+        }
     }
 
     public void setCurrentDate(int day, int month, int year) {
@@ -134,17 +168,7 @@ public class DateSelection extends LinearLayout {
         new AsyncTaskHelper(month, monthRv).execute(monthAdapter);
         new AsyncTaskHelper(year, yearRv).execute(yearAdapter);
         // small hack for waiting until our month adapter has been populated
-        currentDay = day;
-    }
-
-    private void scrollDayAdapter() {
-        // Small hack for starting the async task after our
-        // month adapter has data.
-        // This is being used for setCurrentDate
-        if (currentDay != -1) {
-            new AsyncTaskHelper(currentDay, dayRv).execute(dayAdapter);
-            currentDay = -1;
-        }
+        updateDayAdapter(day, month, year, true);
     }
 
     public void setOnDateChangedListener(@Nullable final OnDateChangedListener listener) {
