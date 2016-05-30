@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 
+import gr.kokeroulis.androiddatetime.models.DateModel;
+
 public class CenterViewHolderListener implements View.OnTouchListener {
     private final float dx;
     private final float dy;
@@ -34,8 +36,19 @@ public class CenterViewHolderListener implements View.OnTouchListener {
                 BaseAdapter adapter = getBaseDateTimeAdapter(recyclerView);
                 if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
                     int pos = holder.getAdapterPosition();
+                    final DateModel model = adapter.getItems().get(pos);
                     final int scrollTo;
-                    if (holder.itemView.getY() < dy /2) {
+                    if (model.value() == -1) {
+                        if (pos > adapter.getItemCount() / 2) {
+                            final DateModel correctModel = adapter.getLastRealModel();
+                            adapter.setActivatedItem(adapter.getItems().indexOf(correctModel));
+                            scrollTo = (int) -(dy - holder.itemView.getY());
+                        } else {
+                            final DateModel correctModel = adapter.getFirstRealModel();
+                            adapter.setActivatedItem(adapter.getItems().indexOf(correctModel));
+                            scrollTo = (int) -(dy - holder.itemView.getY());
+                        }
+                    } else if (holder.itemView.getY() < dy /2) {
                         pos ++;
                         RecyclerView.ViewHolder current = recyclerView.findViewHolderForAdapterPosition(pos);
                         adapter.setActivatedItem(pos);

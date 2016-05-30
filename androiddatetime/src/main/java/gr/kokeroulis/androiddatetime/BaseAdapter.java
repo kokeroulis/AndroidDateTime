@@ -78,6 +78,29 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
         callback.onDateChanged(getActivatedValue());
     }
 
+    public DateModel getFirstRealModel() {
+        for (DateModel value : mValues) {
+            if (value.value() != -1) {
+                return value;
+            }
+        }
+
+        return null;
+    }
+
+    public DateModel getLastRealModel() {
+        if (mValues.size() == 0) return null;
+
+        for (int size = mValues.size(); size > 0; size--) {
+            final DateModel model = mValues.get(size - 1);
+            if (model.value() != -1) {
+                return model;
+            }
+        }
+
+        return null;
+    }
+
     public int getActivatedValue() {
         DateModel item = mValues.get(activatedItem);
         return item.value();
