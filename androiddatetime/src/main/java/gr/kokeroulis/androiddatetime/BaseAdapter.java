@@ -1,6 +1,5 @@
 package gr.kokeroulis.androiddatetime;
 
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,14 +39,6 @@ public class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.ViewHolder> {
         if (!item.title().equals("fake")) {
             holder.dateValue.setText(item.title());
         }
-        int color;
-        if (holder.getAdapterPosition() == activatedItem) {
-            color = android.R.color.holo_red_dark;
-        } else {
-            color = android.R.color.white;
-        }
-
-        holder.parentView.setBackgroundColor(ContextCompat.getColor(holder.parentView.getContext(), color));
     }
 
     public void setItems(List<DateModel> models) {

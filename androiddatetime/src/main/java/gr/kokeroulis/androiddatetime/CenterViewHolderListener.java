@@ -42,11 +42,11 @@ public class CenterViewHolderListener implements View.OnTouchListener {
                         if (pos > adapter.getItemCount() / 2) {
                             final DateModel correctModel = adapter.getLastRealModel();
                             adapter.setActivatedItem(adapter.getItems().indexOf(correctModel));
-                            scrollTo = (int) -(dy - holder.itemView.getY());
+                            scrollTo = (int) (dy);
                         } else {
                             final DateModel correctModel = adapter.getFirstRealModel();
                             adapter.setActivatedItem(adapter.getItems().indexOf(correctModel));
-                            scrollTo = (int) -(dy - holder.itemView.getY());
+                            scrollTo = (int) -(dy);
                         }
                     } else if (holder.itemView.getY() < dy /2) {
                         pos ++;
