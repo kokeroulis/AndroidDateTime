@@ -135,6 +135,7 @@ public class DateSelection extends LinearLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        //The rv will break if a view has click access while we scroll
         getParent().requestDisallowInterceptTouchEvent(true);
         return false;
     }
