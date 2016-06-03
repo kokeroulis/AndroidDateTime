@@ -40,3 +40,6 @@ dependencies {
     compile 'com.hannesdorfmann.parcelableplease:annotation:1.0.1'
     apt 'com.hannesdorfmann.parcelableplease:processor:1.0.1'
 }
+
+apply plugin: 'maven-publish'
+apply from: './deploy.gradle'
