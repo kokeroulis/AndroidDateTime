@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,6 +28,9 @@ public class DateSelection extends LinearLayout {
     private BaseAdapter yearAdapter;
     private OnDateChangedListener listener;
     private AsyncTaskHelper helper;
+    private int year;
+    private int month;
+    private int day;
 
     private final BaseAdapter.Callback dayCallback = new BaseAdapter.Callback() {
         @Override
@@ -124,7 +128,15 @@ public class DateSelection extends LinearLayout {
         yearRv.setAdapter(yearAdapter);
         yearAdapter.setItems(DataDateProvider.getYears());
 
-        setCurrentDate(13, 5, 2016);
+        if (dayAdapter.getItemCount() == 0) {
+            setCurrentDate(day, month, year);
+        }
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        getParent().requestDisallowInterceptTouchEvent(true);
+        return false;
     }
 
     private void updateDayAdapter(int day, int month, int year) {
@@ -164,11 +176,16 @@ public class DateSelection extends LinearLayout {
     }
 
     public void setCurrentDate(int day, int month, int year) {
-
-        new AsyncTaskHelper(month, monthRv).execute(monthAdapter);
-        new AsyncTaskHelper(year, yearRv).execute(yearAdapter);
-        // small hack for waiting until our month adapter has been populated
-        updateDayAdapter(day, month, year, true);
+        if (monthRv == null) {
+            this.day = day;
+            this.year = year;
+            this.month = month;
+        } else {
+            new AsyncTaskHelper(month, monthRv).execute(monthAdapter);
+            new AsyncTaskHelper(year, yearRv).execute(yearAdapter);
+            // small hack for waiting until our month adapter has been populated
+            updateDayAdapter(day, month, year, true);
+        }
     }
 
     public void setOnDateChangedListener(@Nullable final OnDateChangedListener listener) {
