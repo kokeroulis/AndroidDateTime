@@ -1,5 +1,7 @@
 package gr.kokeroulis.androiddatetime;
 
+import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -7,7 +9,9 @@ import java.util.List;
 
 import gr.kokeroulis.androiddatetime.models.DateModel;
 import gr.kokeroulis.androiddatetime.models.DayModel;
+import gr.kokeroulis.androiddatetime.models.MonthDayModel;
 import gr.kokeroulis.androiddatetime.models.MonthModel;
+import gr.kokeroulis.androiddatetime.models.TimeModel;
 import gr.kokeroulis.androiddatetime.models.YearModel;
 
 public final class DataDateProvider {
@@ -34,6 +38,26 @@ public final class DataDateProvider {
         return years;
     }
 
+    public static List<DateModel> getHours() {
+        List<DateModel> time = new ArrayList<>();
+
+        for (int i = 1; i <= 24; i++) {
+            time.add(new TimeModel(i));
+        }
+
+        return time;
+    }
+
+    public static List<DateModel> getMinutes() {
+        List<DateModel> time = new ArrayList<>();
+
+        for (int i = 0; i <= 60; i++) {
+            time.add(new TimeModel(i));
+        }
+
+        return time;
+    }
+
     public static List<DateModel> getDaysForMonthAndYear(int month, int year) {
         int iYear = year;
         int iMonth = month - 1; //(months begin with 0)
@@ -51,5 +75,34 @@ public final class DataDateProvider {
         }
 
         return days;
+    }
+
+    public static List<DateModel> getMonthDay() {
+        final Calendar myCal = Calendar.getInstance();
+        List<DateModel> monthDayList = new ArrayList<>();
+        int counter = 0;
+
+        for (int i = 0; i < 12; i ++) {
+            final Calendar currentCal = new GregorianCalendar(myCal.get(Calendar.YEAR), myCal.get(Calendar.MONTH), 0);
+            final int daysInMonth = currentCal.getMaximum(Calendar.DAY_OF_MONTH);
+            for (int j = 1; j <= daysInMonth; j++) {
+                counter ++;
+                monthDayList.add(new MonthDayModel(counter, i + 1, j));
+            }
+        }
+
+        return monthDayList;
+    }
+
+    @Nullable
+    public static MonthDayModel getMonthDayFromDayOfYear(int dayOfYear) {
+        final List<DateModel> daysOfYear = getMonthDay();
+        for (DateModel dateModel : daysOfYear) {
+            if (dateModel.value() == dayOfYear) {
+                return (MonthDayModel) dateModel;
+            }
+        }
+
+        return null;
     }
 }
