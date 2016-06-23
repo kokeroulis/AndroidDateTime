@@ -41,7 +41,7 @@ public final class DataDateProvider {
     public static List<DateModel> getHours() {
         List<DateModel> time = new ArrayList<>();
 
-        for (int i = 1; i <= 24; i++) {
+        for (int i = 0; i <= 23; i++) {
             time.add(new TimeModel(i));
         }
 
@@ -51,7 +51,7 @@ public final class DataDateProvider {
     public static List<DateModel> getMinutes() {
         List<DateModel> time = new ArrayList<>();
 
-        for (int i = 0; i <= 60; i++) {
+        for (int i = 0; i <= 59; i++) {
             time.add(new TimeModel(i));
         }
 
