@@ -15,8 +15,8 @@ import gr.kokeroulis.androiddatetime.models.TimeModel;
 import gr.kokeroulis.androiddatetime.models.YearModel;
 
 public class DataDateProvider {
-    private static final List<DateModel> years = new ArrayList<>();
-    private static final List<DateModel> months = new ArrayList<>();
+    protected final List<DateModel> years = new ArrayList<>();
+    protected final List<DateModel> months = new ArrayList<>();
 
     public List<DateModel> getMonths() {
         if (months.size() == 0) {
