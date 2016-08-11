@@ -31,6 +31,7 @@ public class DateSelection extends LinearLayout {
     private int year;
     private int month;
     private int day;
+    private final DataDateProvider dateProvider = getDateProvider();
 
     private final BaseAdapter.Callback dayCallback = new BaseAdapter.Callback() {
         @Override
@@ -88,6 +89,10 @@ public class DateSelection extends LinearLayout {
         setOrientation(HORIZONTAL);
     }
 
+    protected DataDateProvider getDateProvider() {
+        return new DataDateProvider();
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -115,7 +120,7 @@ public class DateSelection extends LinearLayout {
         monthAdapter = new BaseAdapter(monthCallback);
         monthRv.setLayoutManager(new LinearLayoutManager(getContext()));
         monthRv.setAdapter(monthAdapter);
-        monthAdapter.setItems(DataDateProvider.getMonths());
+        monthAdapter.setItems(dateProvider.getMonths());
 
         dayRv = (RecyclerView) findViewById(R.id.dayRecyclerView);
         dayAdapter = new BaseAdapter(dayCallback);
@@ -126,7 +131,7 @@ public class DateSelection extends LinearLayout {
         yearAdapter = new BaseAdapter(yearCallback);
         yearRv.setLayoutManager(new LinearLayoutManager(getContext()));
         yearRv.setAdapter(yearAdapter);
-        yearAdapter.setItems(DataDateProvider.getYears());
+        yearAdapter.setItems(dateProvider.getYears());
 
         if (dayAdapter.getItemCount() == 0) {
             setCurrentDate(day, month, year);
@@ -146,7 +151,7 @@ public class DateSelection extends LinearLayout {
 
     private void updateDayAdapter(int day, int month, int year, final boolean firstRun) {
         DateModel correctionDay = null;
-        final List<DateModel> days = DataDateProvider.getDaysForMonthAndYear(month, year);
+        final List<DateModel> days = dateProvider.getDaysForMonthAndYear(month, year);
         for (DateModel dateModel : days) {
             if (dateModel.value() == day) {
                 correctionDay = dateModel;

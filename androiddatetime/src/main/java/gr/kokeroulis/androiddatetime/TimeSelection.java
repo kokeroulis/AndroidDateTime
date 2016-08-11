@@ -27,6 +27,7 @@ public class TimeSelection extends LinearLayout {
     private int hour;
     private int day;
     private int month;
+    private final DataDateProvider dateProvider = getDateProvider();
 
     public TimeSelection(Context context) {
         super(context);
@@ -50,7 +51,7 @@ public class TimeSelection extends LinearLayout {
             int hour = hourAdapter.getActivatedValue();
             int minute = timeAdapter.getActivatedValue();
 
-            final MonthDayModel monthDayModel = DataDateProvider.getMonthDayFromDayOfYear(monthDay);
+            final MonthDayModel monthDayModel = dateProvider.getMonthDayFromDayOfYear(monthDay);
 
             if (listener != null && monthDayModel != null) {
                 listener.onTimeChanged(
@@ -64,8 +65,12 @@ public class TimeSelection extends LinearLayout {
         }
     };
 
-    private void init() {
+    protected void init() {
         setOrientation(HORIZONTAL);
+    }
+
+    protected DataDateProvider getDateProvider() {
+        return new DataDateProvider();
     }
 
     @Override
@@ -95,19 +100,19 @@ public class TimeSelection extends LinearLayout {
         monthDayAdapter = new BaseAdapter(dateTimeCallback);
         monthDayRv.setLayoutManager(new LinearLayoutManager(getContext()));
         monthDayRv.setAdapter(monthDayAdapter);
-        monthDayAdapter.setItems(DataDateProvider.getMonthDay());
+        monthDayAdapter.setItems(dateProvider.getMonthDay());
 
         timeRv = (RecyclerView) findViewById(R.id.dayRecyclerView);
         timeAdapter = new BaseAdapter(dateTimeCallback);
         timeRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        timeAdapter.setItems(DataDateProvider.getMinutes());
+        timeAdapter.setItems(dateProvider.getMinutes());
         timeRv.setAdapter(timeAdapter);
 
         hourRv = (RecyclerView) findViewById(R.id.yearRecyclerView);
         hourAdapter = new BaseAdapter(dateTimeCallback);
         hourRv.setLayoutManager(new LinearLayoutManager(getContext()));
         hourRv.setAdapter(hourAdapter);
-        hourAdapter.setItems(DataDateProvider.getHours());
+        hourAdapter.setItems(dateProvider.getHours());
 
         //if (timeAdapter.getItemCount() == 0) {
             setCurrentDateTime(day, month, time, hour);
@@ -123,7 +128,7 @@ public class TimeSelection extends LinearLayout {
 
     public void setCurrentDateTime(int day, int month, int hour, int minute) {
         if (monthDayRv == null) {
-            MonthDayModel model = MonthDayModel.fromMonthDay(month, day);
+            MonthDayModel model = MonthDayModel.fromMonthDay(month, day, dateProvider);
             this.monthDay = model == null ? 1 : model.value();
             this.day = day;
             this.month = month;
@@ -131,7 +136,7 @@ public class TimeSelection extends LinearLayout {
             this.hour = hour;
         } else {
             if (monthDay == 0) {
-                MonthDayModel model = MonthDayModel.fromMonthDay(month, day);
+                MonthDayModel model = MonthDayModel.fromMonthDay(month, day, dateProvider);
                 this.monthDay = model == null ? 1 : model.value();
             }
             new AsyncTaskHelper(monthDay, monthDayRv).execute(monthDayAdapter);

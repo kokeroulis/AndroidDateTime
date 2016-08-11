@@ -39,8 +39,8 @@ public class MonthDayModel implements DateModel {
         return now.getYear() + 1900;
     }
 
-    public static MonthDayModel fromMonthDay(int month, int day) {
-        List<DateModel> days = DataDateProvider.getMonthDay();
+    public static MonthDayModel fromMonthDay(int month, int day, DataDateProvider provider) {
+        List<DateModel> days = provider.getMonthDay();
         for (DateModel dateModel : days) {
             MonthDayModel model = (MonthDayModel) dateModel;
             if (model.getMonth() == month && model.getDay() == day) {
